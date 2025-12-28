@@ -10,5 +10,7 @@ interface LogRepository {
     suspend fun logSmoke(smokeLog: SmokeLog)
     fun getLatestUrge(): Flow<Urge?>
     fun getLatestSmoke(): Flow<SmokeLog?>
+    fun getAllUrges(): Flow<List<Urge>>
+    fun getAllSmokes(): Flow<List<SmokeLog>>
     fun getPatterns(): Flow<List<Pattern>>
 }

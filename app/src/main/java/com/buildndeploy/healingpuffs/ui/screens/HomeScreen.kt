@@ -26,13 +26,15 @@ import com.buildndeploy.healingpuffs.ui.theme.NetflixDarkGrey
 import com.buildndeploy.healingpuffs.ui.theme.TextGrey
 import com.buildndeploy.healingpuffs.ui.theme.TextWhite
 
+
 @Composable
 fun HomeScreen(
     lastUrge: String?,
     lastSmoke: String?,
     onLogUrge: () -> Unit,
     onLogSmoke: () -> Unit,
-    onPatterns: () -> Unit
+    onPatterns: () -> Unit,
+    onSettings: () -> Unit  // Added settings callback
 ) {
     Column(
         modifier = Modifier
@@ -66,7 +68,8 @@ fun HomeScreen(
 
         // Bottom Navigation
         BottomNavigationBar(
-            onPatterns = onPatterns
+            onPatterns = onPatterns,
+            onSettings = onSettings  // Pass settings callback
         )
     }
 }
@@ -81,8 +84,17 @@ private fun StatusBar(lastUrge: String?, lastSmoke: String?) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Last urge: ${lastUrge ?: "Never"}", color = TextGrey)
-            Text("Last smoke: ${lastSmoke ?: "Never"}", color = TextGrey)
+            Text(
+                text = "Last urge: ${lastUrge ?: "Never"}",
+                color = TextGrey,
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Last smoke: ${lastSmoke ?: "Never"}",
+                color = TextGrey,
+                fontSize = 14.sp
+            )
         }
     }
 }
@@ -114,24 +126,40 @@ private fun ActionCard(
                 modifier = Modifier.padding(end = 16.dp)
             )
             Column {
-                Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextWhite)
-                Text(subtitle, fontSize = 14.sp, color = TextGrey)
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextWhite
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 14.sp,
+                    color = TextGrey
+                )
             }
         }
     }
 }
 
+
 @Composable
-private fun BottomNavigationBar(onPatterns: () -> Unit) {
+private fun BottomNavigationBar(
+    onPatterns: () -> Unit,
+    onSettings: () -> Unit  // ADD THIS
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         NavigationItem("Home", "🏠", selected = true)
         NavigationItem("Patterns", "📊", selected = false, onClick = onPatterns)
-        NavigationItem("Settings", "⚙️", selected = false)
+        NavigationItem("Settings", "⚙️", selected = false, onClick = onSettings)  // FIX THIS
     }
 }
+
+
 
 @Composable
 private fun NavigationItem(
@@ -140,12 +168,21 @@ private fun NavigationItem(
     selected: Boolean,
     onClick: (() -> Unit)? = null
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable(enabled = onClick != null) {
+            onClick?.invoke()
+        }
+    ) {
         Text(
             text = icon,
-            fontSize = 24.sp,
-            modifier = Modifier.clickable { onClick?.invoke() }
+            fontSize = 24.sp
         )
-        Text(title, fontSize = 12.sp, color = TextGrey)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = title,
+            fontSize = 12.sp,
+            color = if (selected) TextWhite else TextGrey
+        )
     }
 }

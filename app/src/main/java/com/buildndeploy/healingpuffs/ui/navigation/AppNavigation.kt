@@ -1,10 +1,14 @@
 package com.buildndeploy.healingpuffs.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.buildndeploy.healingpuffs.ui.screens.*
+import com.buildndeploy.healingpuffs.ui.viewmodel.HomeViewModel
 
 @Composable
 fun AppNavigation() {
@@ -23,18 +27,27 @@ fun AppNavigation() {
         }
 
         composable("home") {
+            val viewModel: HomeViewModel = hiltViewModel()
+            val lastUrge by viewModel.lastUrge.collectAsState()
+            val lastSmoke by viewModel.lastSmoke.collectAsState()
+
             HomeScreen(
-                lastUrge = "45m ago",
-                lastSmoke = "2h ago",
+                lastUrge = lastUrge,
+                lastSmoke = lastSmoke,
                 onLogUrge = { navController.navigate("log_urge") },
                 onLogSmoke = { navController.navigate("smoke") },
-                onPatterns = { navController.navigate("patterns") }
+                onPatterns = { navController.navigate("patterns") },
+                onSettings = { navController.navigate("settings") }
             )
         }
 
         composable("log_urge") {
+            val viewModel: HomeViewModel = hiltViewModel()
             LogUrgeScreen(
-                onStartDelay = { navController.navigate("delay") },
+                onStartDelay = {
+                    viewModel.logUrge()
+                    navController.navigate("delay")
+                },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -47,15 +60,30 @@ fun AppNavigation() {
         }
 
         composable("smoke") {
+            val viewModel: HomeViewModel = hiltViewModel()
             SmokeScreen(
-                onContinue = { navController.navigate("home") },
+                onContinue = {
+                    viewModel.logSmoke()
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
                 onBack = { navController.popBackStack() }
             )
         }
 
         composable("patterns") {
+            val viewModel: HomeViewModel = hiltViewModel()
+            val patterns by viewModel.patterns.collectAsState()
+
             PatternsScreen(
-                patterns = listOf("Most urges: 8-10 PM", "Top trigger: Stress"),
+                patterns = patterns,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("settings") {
+            SettingsScreen(
                 onBack = { navController.popBackStack() }
             )
         }
