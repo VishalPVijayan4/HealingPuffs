@@ -10,11 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.buildndeploy.healingpuffs.domain.model.Pattern
 import com.buildndeploy.healingpuffs.ui.theme.*
 
 @Composable
 fun PatternsScreen(
-    patterns: List<String>,
+    patterns: List<Pattern>,
     onBack: () -> Unit
 ) {
     Column(
@@ -44,14 +45,14 @@ fun PatternsScreen(
 }
 
 @Composable
-private fun PatternCard(pattern: String) {
+private fun PatternCard(pattern: Pattern) {  // ✅ Changed parameter type
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = NetflixDarkGrey),
         shape = RoundedCornerShape(12.dp)
     ) {
         Text(
-            text = pattern,
+            text = pattern.description,  // ✅ Access description property
             modifier = Modifier.padding(16.dp),
             color = TextWhite
         )
