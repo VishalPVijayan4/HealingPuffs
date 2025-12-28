@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.gson)
+    implementation(libs.hilt.navigation.compose)
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
