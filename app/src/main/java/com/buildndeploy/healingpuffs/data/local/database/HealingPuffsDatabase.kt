@@ -7,11 +7,13 @@ import androidx.room.TypeConverters
 import android.content.Context
 import com.buildndeploy.healingpuffs.data.local.dao.LogDao
 import com.buildndeploy.healingpuffs.data.local.dao.TriggerConverter
+import com.buildndeploy.healingpuffs.data.local.entity.LogEntity
 import com.buildndeploy.healingpuffs.data.local.entity.SmokeLogEntity
 import com.buildndeploy.healingpuffs.data.local.entity.UrgeEntity
 
+// HealingPuffsDatabase.kt
 @Database(
-    entities = [UrgeEntity::class, SmokeLogEntity::class],
+    entities = [LogEntity::class,UrgeEntity::class, SmokeLogEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -28,11 +30,14 @@ abstract class HealingPuffsDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     HealingPuffsDatabase::class.java,
-                    "healing_puffs_db"
-                ).build()
+                    "healing_puffs_database"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }
         }
     }
 }
+

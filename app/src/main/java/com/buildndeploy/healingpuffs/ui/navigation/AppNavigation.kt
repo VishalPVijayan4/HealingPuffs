@@ -32,8 +32,8 @@ fun AppNavigation() {
             val lastSmoke by viewModel.lastSmoke.collectAsState()
 
             HomeScreen(
-                lastUrge = lastUrge,
-                lastSmoke = lastSmoke,
+                lastUrge = lastUrge as String?,
+                lastSmoke = lastSmoke as String?,
                 onLogUrge = { navController.navigate("log_urge") },
                 onLogSmoke = { navController.navigate("smoke") },
                 onPatterns = { navController.navigate("patterns") },

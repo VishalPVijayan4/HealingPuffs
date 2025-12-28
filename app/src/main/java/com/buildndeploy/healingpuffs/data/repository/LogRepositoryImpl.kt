@@ -51,6 +51,17 @@ class LogRepositoryImpl @Inject constructor(
             entity?.toDomain()
         }
 
+    // ✅ ADD THESE IMPLEMENTATIONS
+    override fun getAllUrges(): Flow<List<Urge>> =
+        logDao.getAllUrges().map { entities ->
+            entities.map { it.toDomain() }
+        }
+
+    override fun getAllSmokes(): Flow<List<SmokeLog>> =
+        logDao.getAllSmokes().map { entities ->
+            entities.map { it.toDomain() }
+        }
+
     override fun getPatterns(): Flow<List<Pattern>> =
         combine(
             logDao.getLatestUrge(),
@@ -68,9 +79,7 @@ class LogRepositoryImpl @Inject constructor(
         if (latestUrge == null && latestSmoke == null) {
             patterns.add(
                 Pattern(
-                    type = "info",
-                    label = "No data yet. Start tracking!",
-                    count = 0
+                    description = "No data yet. Start tracking!",
                 )
             )
             return patterns
@@ -82,9 +91,7 @@ class LogRepositoryImpl @Inject constructor(
             }.get(Calendar.HOUR_OF_DAY)
             patterns.add(
                 Pattern(
-                    type = "hour",
-                    label = "Most urges: $hourOfDay:00 - ${(hourOfDay + 1) % 24}:00",
-                    count = 1
+                    description = "No data yet. Start tracking!",
                 )
             )
         }
@@ -92,9 +99,7 @@ class LogRepositoryImpl @Inject constructor(
         latestSmoke?.let {
             patterns.add(
                 Pattern(
-                    type = "info",
-                    label = "Last smoke recorded",
-                    count = 1
+                    description = "No data yet. Start tracking!",
                 )
             )
         }
@@ -103,8 +108,21 @@ class LogRepositoryImpl @Inject constructor(
     }
 }
 
-// Extension functions to convert entities to domain models
 private fun UrgeEntity.toDomain(): Urge {
+    return Urge(
+        id = this.id,
+        intensity = this.intensity,
+        triggers = this.triggers.map { triggerString ->
+            Trigger(name = triggerString)  // ✅ Simply create Trigger with the name
+        },
+        timestamp = this.timestamp,
+        delayed = this.delayed
+    )
+}
+
+
+// Extension functions
+/*private fun UrgeEntity.toDomain(): Urge {
     return Urge(
         id = this.id,
         intensity = this.intensity,
@@ -118,7 +136,7 @@ private fun UrgeEntity.toDomain(): Urge {
         timestamp = this.timestamp,
         delayed = this.delayed
     )
-}
+}*/
 
 private fun SmokeLogEntity.toDomain(): SmokeLog {
     return SmokeLog(
